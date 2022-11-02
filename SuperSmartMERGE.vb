@@ -1,4 +1,4 @@
-' SuperSmartMERGE v1
+' SuperSmartMERGE v1.1
 ' A smarter Merge transition for vMix.
 ' by Aden Beckitt
 ' https://github.com/patriot1889/
@@ -10,6 +10,7 @@
 ' *****  Adjust LAYERS to perform Clean MERGE Transition  *****
 ' *************************************************************
 
+dim mergeDuration as String = "1000"    ' Enter duration for merge transition
 
 'The KEYS of PROGRAM and PREVIEW
 dim PROGInput as String = ""            ' The KEY (AS String) of the INPUT NOW in PROGRAM
@@ -90,13 +91,13 @@ If TotalPROGLayers>0 AND TotalPREVLayers>0 Then 'PREVIEW and PROGRAM both have l
     If NOT FoundLayerPREV IS NOTHING AND TotalMatchingLayers>1 Then
         API.Function("MoveMultiViewOverlay", Input:=PREVInputNumber, value:=(CInt(FoundLayerPREV) + 1) & ",10")    'PREV:Move FoundLayerPREV to LAYER 10
         API.Function("MoveMultiViewOverlay", Input:=PROGInputNumber, value:=(CInt(FoundLayerPROG) + 1) & ",10")    'PROG:Move FoundLayerPROG to LAYER 10
-        Sleep(200)
-        API.Function("Merge")
+        Sleep(100)
+        API.Function("Merge", Duration:=mergeDuration)
         Sleep(1000)
         API.Function("MoveMultiViewOverlay", Input:=PREVInputNumber, value:="10," & (CInt(FoundLayerPREV) + 1))     'PREV:Move Layer 10 back to FoundLayerPREV
         API.Function("MoveMultiViewOverlay", Input:=PROGInputNumber, value:="10," & (CInt(FoundLayerPROG) + 1))     'PROG:Move Layer 10 back to FoundLayerPROG
     Else
-        API.Function("Merge")
+        API.Function("Merge", Duration:=mergeDuration)
         If TotalMatchingLayers<=1 Then
             Console.WriteLine("TotalMatchingLayers not greater than ONE. (Likely just background layer) Doing simple MERGE")
         End If
@@ -110,12 +111,12 @@ Else If TotalPROGLayers<=0 AND TotalPREVLayers>0 Then  'LAYERS are in PREVIEW wi
         FoundLAYER = FoundLAYERNode.Attributes.GetNamedItem("index").Value    ' ...Assign the INDEX of the LAYER
        
         API.Function("MoveMultiViewOverlay", Input:=PREVInputNumber, value:=(CInt(FoundLAYER) + 1) & ",10")    'PREV:Move FoundLAYER to LAYER 10
-        Sleep(200)
-        API.Function("Merge")
+        Sleep(100)
+        API.Function("Merge", Duration:=mergeDuration)
         Sleep(1000)
         API.Function("MoveMultiViewOverlay", Input:=PREVInputNumber, value:="10," & (CInt(FoundLAYER) + 1))     'PROG:Move Layer 10 back to FoundLAYER
     Else
-        API.Function("Merge")
+        API.Function("Merge", Duration:=mergeDuration)
     End If
     
 Else If TotalPROGLayers>0 AND TotalPREVLayers<=0 Then  'LAYERS are in PROGRAM with an just INPUT in PREVIEW
@@ -126,15 +127,15 @@ Else If TotalPROGLayers>0 AND TotalPREVLayers<=0 Then  'LAYERS are in PROGRAM wi
     If NOT FoundLAYERNode IS NOTHING Then   ' If there is a LAYER with the INPUT in PREVIEW...
         FoundLAYER = FoundLAYERNode.Attributes.GetNamedItem("index").Value    ' ...Assign the INDEX of the LAYER
         API.Function("MoveMultiViewOverlay", Input:=PROGInputNumber, value:=(CInt(FoundLAYER) + 1) & ",10")    'PROG:Move FoundLAYER to LAYER 10
-        Sleep(200)
-        API.Function("Merge")
+        Sleep(100)
+        API.Function("Merge", Duration:=mergeDuration)
         Sleep(1000)
         API.Function("MoveMultiViewOverlay", Input:=PROGInputNumber, value:="10," & (CInt(FoundLAYER) + 1)) 'PROG:Move Layer 10 back to FoundLAYER
     Else
         
-        API.Function("Merge")  
+        API.Function("Merge", Duration:=mergeDuration)  
     End If
     
 Else 'Neither PROGRAM or PREVIEW have layers
-    API.Function("Merge")   'Just do the MERGE without any adjustments
+    API.Function("Merge", Duration:=mergeDuration)   'Just do the MERGE without any adjustments
 End If
